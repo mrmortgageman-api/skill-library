@@ -57,3 +57,7 @@ For milestone releases, this gets tagged with semantic versioning (`scenario-eng
 
 - **Credit Intelligence structure decision:** two different 12-section credit diagnostic structures existed — one embedded in the old flat kernel, one in the Drive-sourced Playbook doc. The Playbook structure was adopted as canonical (see the reconciliation note at the top of `knowledge/credit-intelligence-playbook.md`) without a prior explicit sign-off from Scott. Flag it if that's wrong — it's a one-file revert.
 - **Calculator naming reconciliation:** BUYDOWN_COMPARISON and WEALTH_ACCELERATOR, previously listed as separate pending calculators in the kernel, were folded into PURCHASE_PAYMENT_STANDARD_CALCULATOR per the newer Calculator Router doc. See the reconciliation note at the top of `knowledge/calculator-router.md`.
+
+## Resolved during this rebuild
+
+- **TCA schema vs. the live tool:** the first version of `knowledge/tca-master-schema.md` matched a Drive doc, not the actually-deployed `nextjs-boilerplate/app/tca-mvp.jsx` (live at the Vercel URL Scott uses). Scott caught this by asking directly. Confirmed against the deployed code and rewritten to match it exactly — see the "Why this doc changed" note at the top of that file. The Drive doc's richer schema is a Phase 2 target, not today's export format, until `tca-mvp.jsx` is rebuilt against it and redeployed.
