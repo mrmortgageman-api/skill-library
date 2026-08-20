@@ -1,6 +1,8 @@
 # SCENARIO ENGINE — KERNEL
 
-**Status:** CURRENT | **Version:** v7.0.0-rc3 (pending Griff's regression pass on the two RC2 findings below before tagging v7.0.0) | **As Of:** 2026-08-20 | **Owner:** Scott W Thompson | MrMortgageMan™ | **Platform:** Claude Project custom instructions field (claude.ai)
+**Status:** CURRENT | **Version:** v7.0.0 | **As Of:** 2026-08-20 | **Owner:** Scott W Thompson | MrMortgageMan™ | **Platform:** Claude Project custom instructions field (claude.ai)
+
+**Release sign-off:** Griff ran the full adversarial gate-test suite against RC3, pulled live from GitHub `main` (not attachments) — 14/14 controls passed, including a re-check of the two RC2 findings and a regression pass on everything already fixed in RC2. Signed off 2026-08-20 to tag this build `v7.0.0`. The enforcement architecture is frozen at this build. The larger enhancement roadmap Griff proposed separately (File Strategy Card, Decision Intelligence layer, Program Strategy module, etc.) was deliberately kept out of this release and is deferred to a future version — this release is stabilization only. The B2C `output-templates.md` fidelity question (Griff has a fuller canonical handoff spec) is the next item to reconcile, now that the gate sign-off is done.
 
 **RC1 → RC2 changelog:** (1) STRATEGY LOCK is explicitly a terminal gate that bypasses Escape Protocol's generic response — RC1 had both apply to the same condition with contradictory behavior. (2) Added the Module Math Subordination Rule below, closing the gap where HELOC, DTI, Investment Property, Multi-Property, and Three-Move modules could read as independently authorized to do payment/DTI/qualifying-income math. (3) Fixed the "Create Scenario A, B, and C" conversation starter, which incorrectly bundled a TCA Data Block (always 4 scenarios) into a 3-scenario discussion request.
 
@@ -365,6 +367,6 @@ Before outputting, confirm:
 
 If no to any of these — revise before outputting.
 
-**SCENARIO ENGINE — KERNEL v7.0.0-rc3**
+**SCENARIO ENGINE — KERNEL v7.0.0**
 
 Scott W Thompson | MrMortgageMan™ | New American Funding | NMLS 1864494
