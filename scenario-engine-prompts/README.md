@@ -33,6 +33,27 @@ scenario-engine-prompts/
 
 **Knowledge Override Rule (stated in the kernel, repeated here for emphasis):** a knowledge doc can extend behavior, never weaken a kernel hard gate, unless the kernel names the exception itself.
 
+### Authority / Routing Index
+
+Quick lookup for "which file governs X" — for humans auditing this system and as a map for what to retrieve.
+
+```
+Hard gates / exceptions        → kernel
+Complexity definition          → complexity-marker-reference
+Calculator selection           → calculator-router
+Module math subordination      → kernel (Module Math Subordination Rule)
+TCA payload contract           → tca-master-schema
+Credit diagnosis               → credit-intelligence-playbook
+HELOC analysis                 → heloc-analysis-module
+Rental income protocol         → investment-property-income-module
+Portfolio analysis             → multi-property-portfolio-module
+DTI forward capacity           → dti-stress-test-module
+Three-move strategy            → three-move-wealth-strategy-module
+B2C + Clare structure          → output-templates
+Voice                          → voice-and-language
+IDs / naming                   → operational-identity
+```
+
 ## How each platform uses this
 
 **Claude Project (claude.ai):** `kernel/scenario-engine-kernel.md` gets pasted into the Project's custom instructions field. Every file under `knowledge/` gets uploaded into the Project's actual knowledge base (via Project docs) so the model can retrieve them when a trigger fires — the same content, not summaries of it.
@@ -43,7 +64,7 @@ scenario-engine-prompts/
 
 No more manual `CURRENT_YYYY-MM-DD` / `SUPERSEDED_YYYY-MM-DD` renaming inside this folder — git history is the version history. `git log -- scenario-engine-prompts/` shows every change with a timestamp and message. `git diff` between two commits shows exactly what changed.
 
-For milestone releases, this gets tagged with semantic versioning (`scenario-engine-v7.0.0`, etc.) — major = architecture change, minor = new module or doc, patch = a fix. The August 20, 2026 kernel+knowledge-docs rebuild is the intended v7.0.0, pending Scott's sign-off after a live test run; it's marked `v7.0.0-rc1` in the kernel file's header until then.
+For milestone releases, this gets tagged with semantic versioning (`scenario-engine-v7.0.0`, etc.) — major = architecture change, minor = new module or doc, patch = a fix. The August 20, 2026 kernel+knowledge-docs rebuild is the intended v7.0.0. RC1 went through Griff's first architecture review, which passed the core design but found a real STRATEGY LOCK/Escape Protocol contradiction, a module math-authority gap, and a kernel conversation-starter bug — all fixed in `v7.0.0-rc2`, the version currently in the kernel file's header. RC2 is pending Griff's adversarial gate testing before this gets tagged `v7.0.0` for real.
 
 ## Update workflow
 

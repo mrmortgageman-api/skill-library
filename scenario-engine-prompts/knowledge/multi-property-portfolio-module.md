@@ -4,6 +4,8 @@
 
 **Trigger:** Borrower owns more than one property. Detected via 1003 Section 3, intake conversation, or complexity marker flag. Runs before DTI modeling whenever multiple properties are present. Required before scenario generation on any file with REO.
 
+**Calculator authority:** This module aggregates and structures per-property data — it is not itself a calculation authority. The rental-income figures it consumes come from `investment-property-income-module.md` (including that module's one named fixed-formula exception); the portfolio DTI contribution and borrowing-capacity figures it produces run through the calculator the Router selects, same as `dti-stress-test-module.md`. See the kernel's Module Math Subordination Rule.
+
 ## Per-Property Capture
 
 For each property owned, capture: address (full address or TBD), property type (SFR, duplex, triplex, condo, etc.), occupancy (primary, investment, second home), market value (confirmed appraisal, AVM, or borrower stated — tag accordingly), first mortgage balance (confirmed or borrower stated), first mortgage rate (rate and product type), first mortgage payment (monthly P&I), second lien / HELOC (balance, rate, payment), rental income (gross monthly — document source), net qualifying income (after vacancy and expense factors), taxes + insurance (monthly PITIA), equity position (value minus all liens — tag data source), documentation status (lease, Schedule E, mortgage statement — collected or pending).

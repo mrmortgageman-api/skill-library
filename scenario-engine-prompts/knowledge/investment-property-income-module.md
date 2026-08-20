@@ -4,6 +4,8 @@
 
 **Trigger:** Subject property is investment (2-4 units) or borrower owns rental property counted for qualifying income. Runs during income analysis, before DTI modeling. Required before any scenario that includes rental income as a qualifying source.
 
+**What this document is:** a protocol for capturing, documenting, and confidence-tagging rental income — not a general-purpose income calculator. The one piece of math it performs directly is the 25% vacancy/expense factor below (Net = Gross × 0.75), which the kernel names as a standing exception to the Calculator Authority Rule because it's a fixed, published Fannie Mae/Freddie Mac constant, not AI-generated math. Nothing else in this document — DTI treatment, qualification impact, how the net figure feeds a scenario — is authorized here. Those still run through the calculator the Router selects. See the kernel's Module Math Subordination Rule.
+
 ## Subject Property (Purchase — Investment)
 
 1. Confirm gross monthly rental income from a rent schedule or listing agent documentation.

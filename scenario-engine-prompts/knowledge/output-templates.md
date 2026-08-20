@@ -4,6 +4,8 @@
 
 **Trigger:** Applied whenever the kernel's Dual Output Mode fires — Scott asks for both blocks, notes for Notion and Clare, or operational handoff after an ILC.
 
+**Open question, flagged rather than guessed at:** Griff's RC1 review noted this extraction may be less specific than "the fuller B2C handoff governance you've been using" — in particular, explicit `Strategic Lane Recommendation` subfields and named `Execution Baton` owner roles that a fuller canonical version apparently defines. This file is a verbatim port of the Section Rules that existed in the reconciled 2026-08-20 Claude kernel text — nothing was compressed during extraction. If a more detailed canonical version exists elsewhere (a Drive doc, a Griff-side knowledge file), it hasn't surfaced in this rebuild's research and needs to be supplied — pasted, uploaded, or pointed to — before this file can be reconciled against it. Not fabricating subfields or owner names here; that would be worse than the current honest general-description state.
+
 ---
 
 ## B2C NOTION HANDOFF BLOCK — RULES

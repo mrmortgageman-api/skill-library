@@ -4,6 +4,8 @@
 
 **Trigger:** Scott asks "does this deal max them out," "what is their DTI after this closes," "can they buy again after this," or any forward-looking borrowing capacity question. Also triggers automatically when the Three-Move Wealth Strategy Frame is active. Runs after income analysis and before or alongside scenario modeling.
 
+**Calculator authority:** This module defines what to capture and how to report it — it is not itself a calculation authority. Every ratio, headroom figure, and forward-capacity number below must run through the calculator the Router selects (`DTI_3_PROPERTY_STANDARD_CALCULATOR`, per `calculator-router.md`) before being reported. See the kernel's Module Math Subordination Rule. If that calculator is unavailable, this is a missing-calculator condition — Escape Protocol, not a workaround.
+
 ## Produce Three DTI Snapshots
 
 **Snapshot 1 — Current DTI (Pre-Transaction):** All current monthly debt obligations from the 1003, all confirmed qualifying income, front-end ratio (housing only), back-end ratio (all obligations), available DTI headroom to the 43% threshold.

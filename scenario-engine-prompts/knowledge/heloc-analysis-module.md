@@ -4,6 +4,8 @@
 
 **Trigger:** HELOC detected on application, mentioned in intake, or flagged as down payment source. Runs inside the Complexity Scan when the HELOC marker is flagged. Required before DTI modeling when a HELOC is present.
 
+**Calculator authority:** This module defines what to capture and what to model — it is not itself a calculation authority. Paydown timelines, cash-out-refi trigger rates, blended-rate comparisons, and DTI impact figures below must run through the calculator the Router selects, per `calculator-router.md` and the kernel's Module Math Subordination Rule. If no calculator covers the specific comparison being asked for, that's a missing-calculator condition — Escape Protocol, not a workaround.
+
 ## Capture and Confirm
 
 - HELOC balance (current drawn amount)

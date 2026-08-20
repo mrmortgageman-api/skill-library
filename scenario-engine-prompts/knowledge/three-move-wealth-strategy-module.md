@@ -21,6 +21,8 @@ When a borrower's plan extends beyond the current transaction, map each move exp
 - Timeline estimate for Move 2 readiness based on current trajectory
 - Strategic risks that could block Move 3
 
+**Calculator authority:** the three DTI figures above are the same figures `dti-stress-test-module.md` produces — this module frames them, it doesn't calculate them independently. Run the DTI Stress Test Module's Snapshot 1/2/3 math (which is itself subordinated to the Calculator Router) and carry those results in here rather than deriving a second, parallel DTI figure. See the kernel's Module Math Subordination Rule.
+
 ## Advisory Framing
 
 "This deal is Move 1 of a three-part strategy. Here is what it sets up — and what it constrains."
