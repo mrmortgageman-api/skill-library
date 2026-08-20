@@ -1,198 +1,145 @@
 # TCA MASTER JSON SCHEMA
 
-**Status:** CURRENT, single source of truth for the TCA DATA BLOCK. Adopted 2026-08-20 as the schema the kernel's Export Mode must comply with, replacing the malformed single-scenario example that had been embedded directly in the Claude kernel.
+**Status:** CURRENT — rewritten 2026-08-20 to match the actual deployed tool, replacing an earlier version of this doc that matched a Drive-sourced schema spec instead. See "Why this doc changed" below before touching anything downstream of it.
 
-**Source of truth:** `mrmortgageman-api/skill-library` → `scenario-engine-prompts/knowledge/tca-master-schema.md`. Original authored in Drive as `MMM_TCA_Master_Schema`. This document is the single source of truth for the JSON schema connecting Griff/Scenario Engine, the TCA visualization tool, and the React scenario engine. **When Griff, the kernel, or the tool conflict on a field-level question, this document wins.** (The kernel still governs whether export is allowed to happen at all — Scenario Lock, calculator authority, and approval gates all sit upstream of this schema.)
+**Source of truth for this version:** the live code at `mrmortgageman-api/nextjs-boilerplate` → `app/tca-mvp.jsx`, deployed at `https://nextjs-boilerplate-one-pearl-61.vercel.app/`. That tool's own header comment pins it to `MMM_TCA_JSON_MASTER_SCHEMA_CURRENT_2026-03-22`, and its README (`TCA_MVP_README.md`) says "MVP Locked: Yes | Ready for Client Use: Yes" as of June 17-18, 2026. **When this doc and the deployed code disagree, re-check the code — the code is what actually runs when Scott pastes JSON into the tool. This doc is a description of that code, not the other way around.**
 
 ---
 
-## TOP-LEVEL FIELDS — BOTH MODES
+## WHY THIS DOC CHANGED (read this once)
 
-Always output `mode`, `borrowerName`, `loanType`, and `analysisDate`. No exceptions.
+The first version of this file, written earlier in this same rebuild, was ported from a Drive doc called `MMM_TCA_Master_Schema` that explicitly says "when Griff, the schema, or the tool conflict — this document wins." That Drive doc describes a richer schema: `taxMonthly`/`insuranceMonthly`/`taxAnnual`/`hazardAnnual`, dollar `downPayment`, per-scenario `purchasePrice`/`downPayment` overrides, `buydownType`.
 
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| mode | string | Yes | "purchase" or "refi" — controls which UI and calculations render |
-| borrowerName | string | Yes | First and last name of primary borrower |
-| coBorrowerName | string | No | Include only if co-borrower exists. Omit entirely if none — never output empty string |
-| propertyAddress | string | No | Full street address if known. Omit if not available |
-| loanType | string | Yes | "Conventional", "FHA", "VA", or "Jumbo" |
-| analysisDate | string | Yes | Today's date, ISO format: YYYY-MM-DD |
-| analysisHorizon | number | Yes | Years for horizon calculations. Default 10 |
-| taxMonthly | number | Yes | Monthly property tax. Default 700 if unknown |
-| insuranceMonthly | number | Yes | Monthly hazard insurance. Default 150 if unknown |
-| taxAnnual | number | Yes | taxMonthly × 12. Always compute — never omit |
-| hazardAnnual | number | Yes | insuranceMonthly × 12. Always compute — never omit |
-| hoaMonthly | number | No | Monthly HOA if applicable. Omit if none |
+Scott asked directly whether the export would work against the current live tool. It would not have. The deployed `tca-mvp.jsx` uses a different, older, simpler schema (`monthlyTax`/`monthlyInsurance`/`hoaMonthly`, `downPaymentPct`, a single top-level `loanAmount` used for every scenario, no `taxAnnual`/`hazardAnnual` fields at all, plus several Coach-View-only fields the Drive doc never mentions: `dti`, `creditScore`, `incomeDocsComplete`, `employmentTenure`).
 
-## PURCHASE MODE FIELDS
+This doc now describes what's actually live. The richer Drive-doc schema may be where the tool is headed in a future phase, but exporting to it today would fail the tool's own validation gate or silently produce wrong numbers. Treat the Drive doc as a Phase 2 design note, not the current export target, until someone actually rebuilds `tca-mvp.jsx` against it and redeploys.
 
-Shared top-level price — all scenarios inherit unless overridden:
+---
+
+## TOP-LEVEL FIELDS
 
 | Field | Type | Required | Notes |
 |---|---|---|---|
-| purchasePrice | number | Yes | Shared default purchase price |
-| downPayment | number | Yes | Shared default down payment in dollars |
+| mode | string | Yes | "purchase" or "refi". Defaults to "purchase" if omitted, but include it explicitly. |
+| borrowerName | string | No | Displayed in the header if present. |
+| coBorrowerName | string | No | Display only. |
+| analysisDate | string | Yes | Validation fails without it. Use YYYY-MM-DD. |
+| loanType | string | Yes | Validation fails without it. Not restricted to a fixed list in code, but use "Conventional", "FHA", "VA", or "Jumbo" for consistency. |
+| loanAmount | number | Yes (effectively) | **This is the field the payment math actually uses — for both purchase and refi.** It is not derived from purchasePrice minus downPayment; the code just reads `data.loanAmount` directly. If this is missing, every scenario's P&I computes as if the loan amount were 0. |
+| currentLoanAmount | number | Yes for refi | Required by the validation gate for refi mode, but **not** read by the payment computation — the computation still uses top-level `loanAmount`. Set both `currentLoanAmount` and `loanAmount` to the same value for refi exports so validation passes and the math is right. This is a known quirk in the MVP, not something to "fix" by omitting one of the two fields. |
+| purchasePrice | number | No (purchase mode) | Used only to compute PMI via LTV = loanAmount / purchasePrice. Omit for refi. |
+| downPaymentPct | number | No | Whole-number percent (20, not 0.20). Used only for a Coach View "20% Down / no PMI" green flag — does not feed the PMI math itself (that comes from the loanAmount/purchasePrice LTV). There is no dollar-amount downPayment field in this schema; if you have a dollar figure, convert to a percent for this field. |
+| monthlyTax | number | No | Added into PITI. Defaults to 0 if omitted — do not omit if tax is known. |
+| monthlyInsurance | number | No | Added into PITI. Defaults to 0 if omitted. |
+| hoaMonthly | number | No | Added into PITI. Defaults to 0 if omitted. |
+| propertyAddress | string | No | Display only; triggers a yellow "Property TBD" flag in Coach View if omitted. |
+| dti | number | No | Decimal (0.38 for 38%). Triggers a red flag above 0.43. |
+| creditScore | number | No | Triggers a red flag below 620. |
+| incomeDocsComplete | boolean | No | `false` triggers a red flag. |
+| employmentTenure | number | No | Years. Triggers a green flag above 5. |
 
-Per-scenario price override — add inside a scenario object only when that scenario uses a different price point; omit from all others:
+There are no `taxAnnual` or `hazardAnnual` fields in the live schema — do not compute or include them, the tool doesn't read them.
 
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| purchasePrice | number | No | Override shared price for this scenario only |
-| downPayment | number | No | Override shared down payment for this scenario only |
+## SCENARIOS ARRAY
 
-Rule: if a scenario omits `purchasePrice`/`downPayment`, the tool uses the shared top-level values. Only populate per-scenario price fields when the scenario genuinely uses a different price point (e.g. comparing two program/price combinations).
+Always exactly 4 objects, in fixed order, with labels matching the mode exactly. Validation fails on any mismatch, including a wrong count.
 
-## REFI MODE FIELDS
-
-Required in addition to top-level fields, only when mode = "refi":
-
-| Field | Type | Required | Notes |
-|---|---|---|---|
-| currentLoanAmount | number | Yes | Remaining principal balance on the current loan |
-| currentRate | number | Yes | Current rate as decimal. Example: 0.0699 for 6.99% |
-| currentTermMonths | number | Yes | Original loan term in months. Example: 360 for 30-year |
-| currentMonthsIn | number | Yes | Months already paid on the current loan |
-| propertyValue | number | Yes | Current estimated property value |
-| currentExtraMonthly | number | No | Extra principal paid monthly on current loan. Default 0 |
-
-## SCENARIOS ARRAY — BOTH MODES
-
-Always output exactly four scenario objects, in this fixed order. No exceptions. Use the placeholder structure for any slot that was not generated.
-
-| Slot | Label | Purpose |
+| Slot | Purchase label | Refi label |
 |---|---|---|
-| 1 | Current Loan (purchase) / Keep Current (refi) | Baseline. The status quo. Always enabled. |
-| 2 | Conservative | Lower-risk option — modest rate improvement or shorter term |
-| 3 | Balanced | Middle path — rate and payment optimization |
-| 4 | Wealth Accelerator | Maximum savings or equity acceleration strategy |
+| 1 | Current Loan | Keep Current |
+| 2 | Conservative | Conservative |
+| 3 | Balanced | Balanced |
+| 4 | Wealth Accelerator | Wealth Accelerator |
 
-Scenario object fields:
+Per-scenario fields:
 
 | Field | Type | Required | Notes |
 |---|---|---|---|
-| label | string | Yes | Must match the fixed labels exactly |
-| rate | number | Yes | Decimal. Example: 0.065 for 6.500% |
-| term | number | Yes | Loan term in years. Typically 30 or 15 |
-| points | number | Yes | Discount points paid. Default 0 |
-| enabled | boolean | Yes | true if active, false for empty placeholder slots |
-| loanAmount | number | No | Refi mode only: new loan amount for this scenario |
-| purchasePrice | number | No | Purchase override only (see above) |
-| downPayment | number | No | Purchase override only (see above) |
-| buydownType | string | No | "1-0", "2-1", or "3-2-1" — include only if the scenario uses a buydown |
+| label | string | Yes | Must match the fixed label for that slot exactly. |
+| rate | number | Yes | Decimal, 0 to 1 (0.065 for 6.5%). Validation fails outside that range. |
+| term | number | Yes | Integer, 5 to 40. Validation fails outside that range or on a non-integer. |
+| points | number | No | Displayed on the Scenarios tab. **Does not affect the payment math in this MVP** — the calculator has no points-to-rate or points-to-cost logic yet. Include it for display accuracy, but don't expect it to change P&I. |
+| enabled | boolean | No | If `false`, that scenario is skipped when building the visualization, but the array still needs exactly 4 objects — use the placeholder shape below rather than dropping the slot. |
+| loanAmount | number | No | **Currently ignored.** The computation always uses the top-level `loanAmount` for every scenario, not a per-scenario override. Don't rely on this field to model different loan amounts across scenarios — the live tool can't do that yet. If you need per-scenario price/loan-amount comparisons, that's a Phase 2 gap, not something the current export can express; say so in Internal Output rather than putting a value here that will be silently ignored. |
+| isARM | boolean | No | Coach View only — combines with `paymentShock` below. |
+| paymentShock | number | No | Dollar amount. Coach View shows a yellow flag if `isARM` is true and this exceeds 200. |
+| buydownType | — | — | Not read anywhere in the live code. Omit — including it does nothing and isn't validated either way. |
 
-Empty placeholder structure:
+Empty/disabled placeholder:
 
 ```json
 { "label": "Conservative", "rate": 0, "term": 30, "points": 0, "enabled": false }
 ```
 
-## FULL EXAMPLES
+## FULL EXAMPLES (values match what the live validator and calculator actually expect)
 
-**Purchase — shared price:**
+**Purchase:**
 
 ```json
 {
   "mode": "purchase",
-  "borrowerName": "Alberto Cruz",
-  "coBorrowerName": "Maria Cruz",
-  "propertyAddress": "1234 Elm Street, San Jose, CA 95101",
-  "loanType": "Jumbo",
+  "borrowerName": "John Smith",
+  "coBorrowerName": "Jane Smith",
+  "purchasePrice": 850000,
+  "downPaymentPct": 20,
+  "loanAmount": 680000,
+  "monthlyTax": 583,
+  "monthlyInsurance": 150,
+  "hoaMonthly": 350,
   "analysisDate": "2026-08-20",
-  "analysisHorizon": 10,
-  "purchasePrice": 775000,
-  "downPayment": 38750,
-  "taxMonthly": 807.29,
-  "insuranceMonthly": 125,
-  "taxAnnual": 9687.48,
-  "hazardAnnual": 1500,
-  "scenarios": [
-    { "label": "Current Loan", "rate": 0.065, "term": 30, "points": 0, "enabled": true },
-    { "label": "Conservative", "rate": 0.0625, "term": 30, "points": 0, "enabled": true },
-    { "label": "Balanced", "rate": 0.060, "term": 30, "points": 0.5, "enabled": true },
-    { "label": "Wealth Accelerator", "rate": 0.0575, "term": 30, "points": 1, "enabled": true }
-  ]
-}
-```
-
-**Purchase — with per-scenario price override:**
-
-```json
-{
-  "mode": "purchase",
-  "borrowerName": "James Reyes",
   "loanType": "Conventional",
-  "analysisDate": "2026-08-20",
-  "analysisHorizon": 10,
-  "purchasePrice": 650000,
-  "downPayment": 130000,
-  "taxMonthly": 700,
-  "insuranceMonthly": 150,
-  "taxAnnual": 8400,
-  "hazardAnnual": 1800,
+  "creditScore": 750,
+  "employmentTenure": 14,
+  "incomeDocsComplete": true,
+  "propertyAddress": "123 Oak St, San Ramon CA 94583",
+  "dti": 0.38,
   "scenarios": [
-    { "label": "Current Loan", "rate": 0.0699, "term": 30, "points": 0, "enabled": true },
-    { "label": "Conservative", "rate": 0.0699, "term": 30, "points": 0, "enabled": true },
-    { "label": "Balanced", "purchasePrice": 675000, "downPayment": 135000, "rate": 0.0699, "term": 30, "points": 0, "enabled": true },
-    { "label": "Wealth Accelerator", "purchasePrice": 700000, "downPayment": 140000, "rate": 0.0699, "term": 30, "points": 0, "enabled": true }
+    { "label": "Current Loan", "rate": 0.06625, "term": 30, "points": 0, "enabled": true },
+    { "label": "Conservative", "rate": 0.06375, "term": 15, "points": 0, "enabled": true },
+    { "label": "Balanced", "rate": 0.06125, "term": 30, "points": 0.5, "enabled": true },
+    { "label": "Wealth Accelerator", "rate": 0.0575, "term": 20, "points": 1, "enabled": true }
   ]
 }
 ```
 
-**Refi — full example:**
+**Refi** (note `currentLoanAmount` and `loanAmount` both set — see the quirk noted above):
 
 ```json
 {
   "mode": "refi",
-  "borrowerName": "David Park",
-  "coBorrowerName": "Susan Park",
-  "propertyAddress": "4500 Oak Avenue, Fremont, CA 94538",
-  "loanType": "Conventional",
+  "borrowerName": "John Smith",
+  "currentLoanAmount": 450000,
+  "loanAmount": 450000,
   "analysisDate": "2026-08-20",
-  "analysisHorizon": 10,
-  "currentLoanAmount": 480000,
-  "currentRate": 0.075,
-  "currentTermMonths": 360,
-  "currentMonthsIn": 24,
-  "propertyValue": 620000,
-  "taxMonthly": 700,
-  "insuranceMonthly": 150,
-  "taxAnnual": 8400,
-  "hazardAnnual": 1800,
+  "loanType": "Conventional",
+  "monthlyTax": 700,
+  "monthlyInsurance": 150,
   "scenarios": [
-    { "label": "Keep Current", "rate": 0.075, "loanAmount": 480000, "term": 30, "points": 0, "enabled": true },
-    { "label": "Conservative", "rate": 0.0675, "loanAmount": 480000, "term": 30, "points": 0, "enabled": true },
-    { "label": "Balanced", "rate": 0.065, "loanAmount": 480000, "term": 30, "points": 0.5, "enabled": true },
-    { "label": "Wealth Accelerator", "rate": 0.0625, "loanAmount": 480000, "term": 15, "points": 1, "enabled": true }
+    { "label": "Keep Current", "rate": 0.045, "term": 25, "points": 0, "enabled": true },
+    { "label": "Conservative", "rate": 0.0425, "term": 20, "points": 0, "enabled": true },
+    { "label": "Balanced", "rate": 0.04, "term": 15, "points": 0.75, "enabled": true },
+    { "label": "Wealth Accelerator", "rate": 0.0375, "term": 10, "points": 1.5, "enabled": true }
   ]
 }
 ```
 
-## TCA DATA BLOCK — EXPORT FORMAT
+## VALIDATION GATE (exact logic, ported from `validateTCA()` in `tca-mvp.jsx`)
 
-After CLIENT OUTPUT and INTERNAL OUTPUT sections, append:
+The tool will not render anything until this passes — it shows the raw error message inline.
 
-```
-=== TCA DATA BLOCK ===
-{ ...full JSON object per this schema... }
-```
+1. `mode` must be "purchase" or "refi", else: `Invalid mode: {mode}`
+2. `scenarios` must be an array of exactly 4, else: `Scenarios error: expected exactly 4, got {n}`
+3. For each of the 4 scenarios, in order: `label` must match the fixed label for that slot and mode, else `Scenario {n} label error`; `rate` must be a number between 0 and 1, else `Scenario {n} rate error`; `term` must be an integer between 5 and 40, else `Scenario {n} term error`
+4. `analysisDate` must be present, else `Missing analysisDate`
+5. `loanType` must be present, else `Missing loanType`
+6. If `mode` is "refi", `currentLoanAmount` must be present, else `Refi mode requires currentLoanAmount`
 
-Rules: Output VALID JSON only, zero commentary inside the JSON. Numbers must be numeric types, never strings. Rates as decimals — 0.065, not 6.5. Do not round; full decimal precision. `analysisDate` = today, YYYY-MM-DD. `analysisHorizon` defaults to 10 unless the client specifies otherwise. This block is for machine consumption only — never reference it in client-facing narrative.
+## KNOWN LIMITATIONS OF THE LIVE MVP (from its own README — don't design an export around fixing these, they're not this schema's job)
 
-After the TCA DATA BLOCK is produced, stop output. Do not continue the conversation.
-
-## HARD RULES & COMMON ERRORS
-
-| Rule | Why it matters |
-|---|---|
-| HARD STOP — always exactly 4 scenario objects | Tool breaks if array length isn't 4 |
-| HARD STOP — rates as decimals (0.065, never 6.5 or "6.500%") | Calculator math fails with percentage format |
-| HARD STOP — `mode` field always present | Tool can't route to the correct UI without it |
-| HARD STOP — `taxAnnual` and `hazardAnnual` always computed and included | Chart and amortization fail without these |
-| REQUIRED — `analysisDate` = today, YYYY-MM-DD | Header display and audit trail |
-| REQUIRED — `loanType` must be one of the 4 valid values | Header badge renders from this field |
-| REQUIRED — omit `coBorrowerName` entirely if no co-borrower | An empty string renders a blank name on the output |
-| BEST PRACTICE — use per-scenario price only when price actually differs | Unnecessary overrides create confusion |
-| BEST PRACTICE — don't round rates | Rounding changes payment calculations |
+- Points don't affect payment math yet.
+- Per-scenario loan amount / price overrides aren't read — all scenarios share the one top-level `loanAmount`.
+- Buydown structures (1-0, 2-1, 3-2-1) aren't modeled — the `buydownType` idea from the Drive doc isn't implemented here.
+- Coach View flags are simple threshold checks, not auto-generated from a full underwriting picture.
+- No HubSpot, Gmail, Drive, or Notion integration — those are stubbed for Phase 2.
 
 MrMortgageMan™ | NMLS #1864494 | New American Funding | Internal Use Only
