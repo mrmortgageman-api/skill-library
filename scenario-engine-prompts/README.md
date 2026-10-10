@@ -22,10 +22,11 @@ scenario-engine-prompts/
     investment-property-income-module.md
     three-move-wealth-strategy-module.md
     dti-stress-test-module.md
-    output-templates.md             ← B2C Notion Handoff Block + Clare Snapshot Block rules
+    output-templates.md             ← B2C Notion Handoff Block + LOA Snapshot Block rules
+    loa-snapshot-builder.md         ← LOA Snapshot field structure + email to the assigned LOA
     calculator-router.md            ← calculator selection logic, no math itself
     tca-master-schema.md            ← authoritative TCA export JSON schema
-    operational-identity.md         ← contact info, IDs, naming conventions
+    operational-identity.md         ← contact info, assigned LOA, IDs, naming conventions
     voice-and-language.md           ← full voice detail (kernel carries the compressed version)
 ```
 
@@ -49,9 +50,10 @@ Rental income protocol         → investment-property-income-module
 Portfolio analysis             → multi-property-portfolio-module
 DTI forward capacity           → dti-stress-test-module
 Three-move strategy            → three-move-wealth-strategy-module
-B2C + Clare structure          → output-templates
+B2C + LOA structure            → output-templates
+LOA Snapshot fields + email    → loa-snapshot-builder
 Voice                          → voice-and-language
-IDs / naming                   → operational-identity
+IDs / naming / assigned LOA    → operational-identity
 ```
 
 ## How each platform uses this
@@ -64,7 +66,7 @@ IDs / naming                   → operational-identity
 
 No more manual `CURRENT_YYYY-MM-DD` / `SUPERSEDED_YYYY-MM-DD` renaming inside this folder — git history is the version history. `git log -- scenario-engine-prompts/` shows every change with a timestamp and message. `git diff` between two commits shows exactly what changed.
 
-For milestone releases, this gets tagged with semantic versioning (`scenario-engine-v7.0.0`, etc.) — major = architecture change, minor = new module or doc, patch = a fix. The August 20, 2026 kernel+knowledge-docs rebuild is `v7.0.0`, the version currently in the kernel file's header. Path to get here: RC1 went through Griff's first architecture review, which passed the core design but found a real STRATEGY LOCK/Escape Protocol contradiction, a module math-authority gap, and a kernel conversation-starter bug — all fixed in RC2. RC2 then went through Griff's adversarial gate-test suite, pulled live from GitHub: 12 of 14 controls passed outright. Two surgical gaps remained — the TCA Export Decision could still offer export after a Manual Math Exception run, and there was no deterministic firing order when multiple terminal gates were true at once. Both fixed in RC3. RC3 then passed the full gate suite 14/14, live from GitHub `main`, and Griff signed off on tagging `v7.0.0` on 2026-08-20. **The git tag itself still needs to be created by hand** — no tool in this environment can create a GitHub tag or release; see the note in Scott's session for the exact command / UI steps.
+For milestone releases, this gets tagged with semantic versioning (`scenario-engine-v7.0.0`, etc.) — major = architecture change, minor = new module or doc, patch = a fix. The August 20, 2026 kernel+knowledge-docs rebuild is `v7.0.0`. The October 10, 2026 LOA generalization (Clare references replaced with an assigned-LOA slot, `loa-snapshot-builder.md` added) is `v7.0.1`, the version currently in the kernel file's header. Path to v7.0.0: RC1 went through Griff's first architecture review, which passed the core design but found a real STRATEGY LOCK/Escape Protocol contradiction, a module math-authority gap, and a kernel conversation-starter bug — all fixed in RC2. RC2 then went through Griff's adversarial gate-test suite, pulled live from GitHub: 12 of 14 controls passed outright. Two surgical gaps remained — the TCA Export Decision could still offer export after a Manual Math Exception run, and there was no deterministic firing order when multiple terminal gates were true at once. Both fixed in RC3. RC3 then passed the full gate suite 14/14, live from GitHub `main`, and Griff signed off on tagging `v7.0.0` on 2026-08-20. **The git tag itself still needs to be created by hand** — no tool in this environment can create a GitHub tag or release; see the note in Scott's session for the exact command / UI steps.
 
 ## Update workflow
 
@@ -74,10 +76,12 @@ For milestone releases, this gets tagged with semantic versioning (`scenario-eng
 4. If a knowledge doc changed, re-upload it to the Claude Project's knowledge base and to the GPT's Knowledge files — replacing the old version, not adding a duplicate.
 5. Notion and Drive pointer pages don't need updating for routine edits — they point at this repo, not at a copy of the text.
 
-## Known open items (as of 2026-08-20 rebuild)
+## Known open items
 
 - **Credit Intelligence structure decision:** two different 12-section credit diagnostic structures existed — one embedded in the old flat kernel, one in the Drive-sourced Playbook doc. The Playbook structure was adopted as canonical (see the reconciliation note at the top of `knowledge/credit-intelligence-playbook.md`) without a prior explicit sign-off from Scott. Flag it if that's wrong — it's a one-file revert.
 - **Calculator naming reconciliation:** BUYDOWN_COMPARISON and WEALTH_ACCELERATOR, previously listed as separate pending calculators in the kernel, were folded into PURCHASE_PAYMENT_STANDARD_CALCULATOR per the newer Calculator Router doc. See the reconciliation note at the top of `knowledge/calculator-router.md`.
+- **Assigned LOA details (2026-10-10):** `operational-identity.md` now holds an assigned-LOA slot. Name, NMLS, email, and phone stay as placeholders until Scott confirms the assignment.
+- **TCA scenario count vs. label doctrine (2026-10-10):** the kernel and `tca-master-schema.md` still require exactly four scenarios. The label-doctrine work in `nextjs-boilerplate` PR #1 accepts 1 to 4 scenarios and an optional `featured` field. Do not change the export contract until that PR is merged, deployed, and Scott approves the switch.
 
 ## Resolved during this rebuild
 
