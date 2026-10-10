@@ -1,6 +1,6 @@
 # Scenario Engine — Source of Truth
 
-**This folder is the canonical source for the Scenario Engine.** Not Notion. Not Google Drive. Not whatever is currently pasted into the Claude Project or ChatGPT Custom GPT settings screens. If any of those ever disagree with what's here, this folder wins — copy it over the live version, don't edit the live version in place and forget to sync back.
+**This folder is the canonical source for the Scenario Engine.** Not Notion. Not Google Drive. Not whatever is currently pasted into the Claude Project settings screen or loaded in the Scenario Engine plugin. If any of those ever disagree with what's here, this folder wins — copy it over the live version, don't edit the live version in place and forget to sync back.
 
 ## Why this exists
 
@@ -8,7 +8,7 @@ Before 2026-08-20, the same governing text lived in three places — the live Cl
 
 ## Structure — kernel + knowledge docs
 
-As of 2026-08-20 this moved from one flat prompt file to a **lean kernel + knowledge docs** architecture, matching how Claude Projects and ChatGPT Custom GPTs actually work: a short instructions field that references a set of documents the model retrieves on demand, rather than one giant wall of text trying to hold everything.
+As of 2026-08-20 this moved from one flat prompt file to a **lean kernel + knowledge docs** architecture, matching how Claude Projects and ChatGPT plugins actually work: a short instructions field that references a set of documents the model retrieves on demand, rather than one giant wall of text trying to hold everything.
 
 ```
 scenario-engine-prompts/
@@ -28,6 +28,7 @@ scenario-engine-prompts/
     tca-master-schema.md            ← authoritative TCA export JSON schema
     operational-identity.md         ← contact info, assigned LOA, IDs, naming conventions
     voice-and-language.md           ← full voice detail (kernel carries the compressed version)
+  griff-chatgpt-custom-instructions.md ← SUPERSEDED 2026-10-10 (Custom GPT retired); kept as history
 ```
 
 **The test for what belongs in the kernel vs. a knowledge doc:** if getting it wrong produces invalid math, an unauthorized conclusion, wrong classification, or a broken export, it's kernel. If it's reference material, a playbook, a schema, or a module that a trigger phrase pulls in, it's a knowledge doc.
@@ -60,7 +61,7 @@ IDs / naming / assigned LOA    → operational-identity
 
 **Claude Project (claude.ai):** `kernel/scenario-engine-kernel.md` gets pasted into the Project's custom instructions field. Every file under `knowledge/` gets uploaded into the Project's actual knowledge base (via Project docs) so the model can retrieve them when a trigger fires — the same content, not summaries of it.
 
-**Griff / ChatGPT Custom GPT:** same pattern, different upload mechanism. A Griff-specific kernel (see `griff-chatgpt-custom-instructions.md`) goes in the GPT's instructions field; the same `knowledge/*.md` files get uploaded as Knowledge files in the GPT builder. Griff's kernel is a separate file because the ChatGPT instructions field has its own formatting quirks and Griff's file was, historically, a slightly different lineage (v6.6 track) — but it should reference the same knowledge docs, not a forked copy of them.
+**Griff / Scenario Engine plugin (ChatGPT Plugin Creator):** As of 2026-10-10 Griff runs the Scenario Engine as a plugin, not a Custom GPT. Plugin: https://chatgpt.com/plugins/plugin_62b84a9dcc788191a72ab20a98996c85 (version 0.32.1 at the switch, shared kernel v7.0.1). The plugin syncs the shared kernel and every `knowledge/*.md` file from this folder; Griff verifies the match against `main` after each change. The plugin's own adapter lives inside the Plugin Creator package at `skills/instructions/SKILL.md`, with scoped TCA/handoff reference files and `lookup/source-lock.json`. No separate GitHub repo exists for that adapter. The old Custom GPT is retired; `griff-chatgpt-custom-instructions.md` is kept as history only.
 
 ## Versioning
 
@@ -72,9 +73,10 @@ For milestone releases, this gets tagged with semantic versioning (`scenario-eng
 
 1. Edit the relevant file(s) under `kernel/` or `knowledge/` in this repo.
 2. Commit with a clear message describing what changed and why.
-3. If the kernel file changed, copy its full text into the Claude Project custom instructions field (and Griff's GPT instructions field, if that kernel also changed) — this has to be done by hand; there's no API for either platform's instructions field.
-4. If a knowledge doc changed, re-upload it to the Claude Project's knowledge base and to the GPT's Knowledge files — replacing the old version, not adding a duplicate.
-5. Notion and Drive pointer pages don't need updating for routine edits — they point at this repo, not at a copy of the text.
+3. If the kernel file changed, copy its full text into the Claude Project custom instructions field — this has to be done by hand; there's no API for the Project instructions field.
+4. If a knowledge doc changed, re-upload it to the Claude Project's knowledge base, replacing the old version, not adding a duplicate.
+5. Notify Griff (via Bo2bot) so the Scenario Engine plugin syncs from `main` and confirms the match.
+6. Notion and Drive pointer pages don't need updating for routine edits — they point at this repo, not at a copy of the text.
 
 ## Known open items
 
@@ -86,3 +88,4 @@ For milestone releases, this gets tagged with semantic versioning (`scenario-eng
 ## Resolved during this rebuild
 
 - **TCA schema vs. the live tool:** the first version of `knowledge/tca-master-schema.md` matched a Drive doc, not the actually-deployed `nextjs-boilerplate/app/tca-mvp.jsx` (live at the Vercel URL Scott uses). Scott caught this by asking directly. Confirmed against the deployed code and rewritten to match it exactly — see the "Why this doc changed" note at the top of that file. The Drive doc's richer schema is a Phase 2 target, not today's export format, until `tca-mvp.jsx` is rebuilt against it and redeployed.
+- **Griff platform (2026-10-10):** the Custom GPT track was retired and replaced by the Scenario Engine plugin. The open item to reconcile the Custom GPT's live instructions is closed.
