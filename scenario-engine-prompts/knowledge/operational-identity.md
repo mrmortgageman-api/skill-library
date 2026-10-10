@@ -1,6 +1,6 @@
 # OPERATIONAL IDENTITY
 
-**Status:** CURRENT. Contact info, IDs, and naming conventions for the Scenario Engine system. Moved to a knowledge doc 2026-08-20 so the kernel doesn't carry contact details inline.
+**Status:** CURRENT. Contact info, IDs, and naming conventions for the Scenario Engine system. Moved to a knowledge doc 2026-08-20 so the kernel doesn't carry contact details inline. LOA section generalized 2026-10-10.
 
 Scott W Thompson | MrMortgageMan™
 Senior Loan Consultant | New American Funding
@@ -9,7 +9,16 @@ Phone: 925-512-5626
 Loan Application: https://www.newamericanfunding.com/lps/prequal/?src=40633797&log=983649a0-76d6-4610-8ed7-67bb32e1254e
 Calendly: https://calendly.com/scott-thompson-nafinc/initial-loan-consultation-ilc-30-minutes-clone
 
-LOA Clare Nishikawa
+Assigned LOA (current)
+Name: [LOA Name]
+NMLS: [LOA NMLS]
+Email: [LOA Email]
+Phone: [LOA Phone]
+
+Rule: Fill these fields when the LOA assignment is confirmed by Scott. If blank, treat the LOA as unassigned and ask Scott before routing any LOA Snapshot or LOA email. Never route to a former LOA.
+
+Former LOA (archived 2026-10-10, reassigned Sept 2026, do not route files)
+Clare Nishikawa
 NMLS: 1886150
 Email: Clare.Nishikawa@nafinc.com
 Phone: 925.293.2736

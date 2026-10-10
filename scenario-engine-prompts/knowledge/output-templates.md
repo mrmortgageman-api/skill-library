@@ -1,16 +1,29 @@
-# OUTPUT TEMPLATES — B2C NOTION HANDOFF BLOCK & CLARE SNAPSHOT BLOCK
+# OUTPUT TEMPLATES — B2C NOTION HANDOFF BLOCK & LOA SNAPSHOT BLOCK
 
-**Status:** CURRENT — RECONCILED 2026-08-22 against the canonical governing documents.
+**Status:** CURRENT — RECONCILED 2026-08-22 against the canonical governing documents. LOA generalization applied 2026-10-10.
 
-**Trigger:** Applied whenever the kernel's Dual Output Mode fires — Scott asks for both blocks, notes for Notion and Clare, or operational handoff after an ILC.
+**Trigger:** Applied whenever the kernel's Dual Output Mode fires — Scott asks for both blocks, notes for Notion and the LOA, or operational handoff after an ILC.
 
-**Reconciliation note:** Griff's RC1 review flagged this file as a compressed extraction, less specific than "the fuller B2C handoff governance" — specifically missing explicit `Strategic Lane Recommendation` subfields and named `Execution Baton` owner roles. The canonical source was located in Google Drive (it was never missing from the system, just not yet surfaced to this rebuild): `ILC_To_B2C_Notion_Handoff_Spec_CURRENT_2026-04-08.md` (AUTHORITATIVE, governs the handoff) and `Scenario_Engine_B2C_Notion_Handoff_Instruction_Block_CURRENT_2026-04-08.md` (the GPT-facing execution layer, subordinate to Griff Core Identity v1.3.2). This file is now reconciled against both, section by section. Nothing here is fabricated — every rule below traces to one of those two documents.
+**2026-10-10 LOA generalization:** Every Clare-specific reference is now generalized to the assigned Loan Officer Assistant (LOA), with a name slot. Clare Nishikawa was reassigned in Sept 2026. The second block is now titled `LOA SNAPSHOT BLOCK` with a `Prepared For: [LOA Name]` line. Field structure is unchanged. The Execution Baton lane "Processing / LOA" is split so the LOA appears once: Scott, LOA ([LOA Name]), Processing, Borrower, Referral Partner. Legacy "Clare" trigger phrases still route here and are treated as LOA. The standalone `Scenario_Engine_B2C_Notion_Handoff_Instruction_Block_CURRENT_2026-10-10.md` revision drafted in chat is folded into this file; this file is canonical.
+
+**Reconciliation note:** Griff's RC1 review flagged this file as a compressed extraction, less specific than "the fuller B2C handoff governance" — specifically missing explicit `Strategic Lane Recommendation` subfields and named `Execution Baton` owner roles. The canonical source was located in Google Drive (it was never missing from the system, just not yet surfaced to this rebuild): `ILC_To_B2C_Notion_Handoff_Spec_CURRENT_2026-04-08.md` (AUTHORITATIVE, governs the handoff) and `Scenario_Engine_B2C_Notion_Handoff_Instruction_Block_CURRENT_2026-04-08.md` (the GPT-facing execution layer). This file is now reconciled against both, section by section. Nothing here is fabricated — every rule below traces to one of those two documents, plus the 2026-10-10 LOA generalization above.
 
 **Governing references (for audit trail):**
 - `ILC_To_B2C_Notion_Handoff_Spec_CURRENT_2026-04-08.md` — AUTHORITATIVE — Google Drive, owner Scott W Thompson
-- `Scenario_Engine_B2C_Notion_Handoff_Instruction_Block_CURRENT_2026-04-08.md` — Platform Prompt Instruction Block — Google Drive, owner Scott W Thompson
-- `clare-snapshot-builder_CURRENT_2026-05-08.md` — supersedes the earlier `Scenario_Engine_Clare_Snapshot_Instruction_Block_CURRENT_2026-04-09.md` reference for Clare Snapshot field structure — Google Drive
+- `Scenario_Engine_B2C_Notion_Handoff_Instruction_Block_CURRENT_2026-04-08.md` — Platform Prompt Instruction Block — Google Drive, owner Scott W Thompson (its legacy override line names Griff Core Identity v1.3.2; in this repo the v7 kernel governs instead)
+- `loa-snapshot-builder.md` (this folder) — field-structure source of truth for the LOA Snapshot Block. Supersedes `clare-snapshot-builder_CURRENT_2026-05-08.md` (Google Drive) and the earlier `Scenario_Engine_Clare_Snapshot_Instruction_Block_CURRENT_2026-04-09.md` reference
 - Kernel override rule (carried from the instruction block): this file is subordinate to the live Scenario Engine kernel. If any conflict exists, the kernel wins.
+
+---
+
+## ASSIGNED LOA
+
+**Assigned LOA:** [LOA Name]
+
+Rules:
+- Replace [LOA Name] with the Loan Officer Assistant assigned to the file. If Scott names one in the request, use that name.
+- If no LOA is assigned or the name is unknown, write: LOA (Unassigned).
+- Never default to a past LOA by name. Current and former LOA details live in `operational-identity.md`.
 
 ---
 
@@ -18,7 +31,7 @@
 
 ### Purpose
 
-Convert ILC output into a clean, structured, Notion-ready B2C file handoff block. The objective is not to summarize the call loosely — it is to translate the consultation into a structured operational note that can be pasted directly into the correct B2C Notion file, handed to Hank without reinterpretation, routed through a Notion connector without drift, and audited later without confusion between fact, inference, and missing information.
+Convert ILC output into a clean, structured, Notion-ready B2C file handoff block. The objective is not to summarize the call loosely — it is to translate the consultation into a structured operational note that can be pasted directly into the correct B2C Notion file, handed to Hank or the assigned LOA without reinterpretation, routed through a Notion connector without drift, and audited later without confusion between fact, inference, and missing information.
 
 It is not a transcript summary, a client email, a sales follow-up, a marketing write-up, or a vague narrative recap. It is an internal operational handoff, a structured truth snapshot, a strategic file-entry brief, and a bridge between consultation and active advisory workflow.
 
@@ -26,7 +39,7 @@ Core principle: the engine must not behave like a note taker. It must behave lik
 
 ### Trigger Rules
 
-Generate the block when any of the following are true: the ILC is complete and the borrower is moving into Active Advisory; Scott requests B2C notes, Notion notes, file notes, or handoff notes; the file needs to be handed to Hank, Clare, or a Notion connector; the consultation produced enough information to establish a real advisory lane; Scenario Engine is being used to prepare the file for system entry.
+Generate the block when any of the following are true: the ILC is complete and the borrower is moving into Active Advisory; Scott requests B2C notes, Notion notes, file notes, or handoff notes; the file needs to be handed to Hank, the assigned LOA ([LOA Name]), or a Notion connector; the consultation produced enough information to establish a real advisory lane; Scenario Engine is being used to prepare the file for system entry.
 
 Optional: the call is early stage but Scott explicitly wants structured notes; a research-stage borrower has enough detail to justify partial file entry.
 
@@ -96,8 +109,8 @@ Rule: name one current best lane only. A secondary lane may be mentioned if rele
 
 ```
 - Scott:
-- Clare:
-- Processing / LOA:
+- LOA ([LOA Name]):
+- Processing:
 - Borrower:
 - Referral Partner:
 ```
@@ -201,7 +214,9 @@ MISSING / UNVERIFIED
 - Item 3:
 
 SCENARIO TIMELINE
-- [Stage or Date]: — [Stage or Date]: — [Stage or Date]:
+- [Stage or Date]:
+- [Stage or Date]:
+- [Stage or Date]:
 
 ADVISORY NOTES
 - Strategic Summary:
@@ -236,8 +251,8 @@ COMMUNICATION LOG
 
 EXECUTION BATON
 - Scott:
-- Clare:
-- Processing / LOA:
+- LOA ([LOA Name]):
+- Processing:
 - Borrower:
 - Referral Partner:
 
@@ -249,14 +264,15 @@ EDUCATIONAL FLAGS
 
 ---
 
-## CLARE SNAPSHOT BLOCK — REQUIRED TEMPLATE
+## LOA SNAPSHOT BLOCK — REQUIRED TEMPLATE
 
-Output this block second. Titled exactly: `CLARE SNAPSHOT BLOCK`
+Output this block second. Titled exactly: `LOA SNAPSHOT BLOCK`, followed by the line `Prepared For: [LOA Name]`.
 
 Keep it short, tactical, and operational. No narrative. No guessing. If a field is unknown, write `TBD`, `Unknown`, or `Needs Verification`. Never fill a field with a guess — TBD or Needs Verification always beats a wrong answer.
 
 ```
-CLARE SNAPSHOT BLOCK
+LOA SNAPSHOT BLOCK
+Prepared For: [LOA Name]
 
 SUBJECT PROPERTY / DEAL SETUP
 - Subject Property:
@@ -298,7 +314,7 @@ SCOTT NOTES
 - Strategic note 2:
 - Strategic note 3:
 
-MISSING ITEMS FOR CLARE
+MISSING ITEMS FOR LOA
 - Missing item 1:
 - Missing item 2:
 - Missing item 3:
@@ -308,20 +324,20 @@ ESCALATION REQUIRED: YES or NO
 
 If ESCALATION REQUIRED is YES, state the reason in one sentence immediately below the escalation line.
 
-Field-structure source of truth for this block: `clare-snapshot-builder_CURRENT_2026-05-08.md` (supersedes the earlier `Scenario_Engine_Clare_Snapshot_Instruction_Block_CURRENT_2026-04-09.md` reference).
+Field-structure source of truth for this block: `loa-snapshot-builder.md` (this folder). The email to the LOA that accompanies this block is governed by that file as well.
 
 ---
 
 ## Dual Output Rule
 
-When Scott asks for both blocks, both outputs, notes for Notion and Clare, or operational handoff after an ILC, file review, or strategy discussion, generate BOTH of the following in the same response, in this exact order:
+When Scott asks for both blocks, both outputs, notes for Notion and the LOA, or operational handoff after an ILC, file review, or strategy discussion, generate BOTH of the following in the same response, in this exact order:
 
 1. B2C Notion Handoff Block
-2. Clare Snapshot Block
+2. LOA Snapshot Block
 
-This is mandatory unless Scott explicitly asks for only one block. Do not output a File Journal, File Summary, Internal Journal, Narrative Recap, or any other substitute in place of the Clare Snapshot Block. Do not stop after the first block. Do not merge the two blocks together.
+This is mandatory unless Scott explicitly asks for only one block. Do not output a File Journal, File Summary, Internal Journal, Narrative Recap, or any other substitute in place of the LOA Snapshot Block. Do not stop after the first block. Do not merge the two blocks together.
 
-Operator intent rules: if Scott asks for notes for Notion, default to both blocks. If Scott asks for notes for Clare, generate the Clare Snapshot Block and include the B2C Notion Handoff Block as well, unless he explicitly says Clare only. If Scott asks for speed, prioritize paste-ready structure over explanation.
+Operator intent rules: if Scott asks for notes for Notion, default to both blocks. If Scott asks for notes for the LOA (by role, by name, or with the legacy word "Clare"), generate the LOA Snapshot Block and include the B2C Notion Handoff Block as well, unless he explicitly says LOA only. If Scott asks for speed, prioritize paste-ready structure over explanation.
 
 ## Playbook Reference Rule
 
