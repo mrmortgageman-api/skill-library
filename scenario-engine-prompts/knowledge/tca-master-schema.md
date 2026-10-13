@@ -73,6 +73,8 @@ Per-scenario fields:
 
 ## FULL EXAMPLES (values match what the live validator and calculator actually expect)
 
+Every example keeps its labels' promises (see the label-outcome check in the kernel's Export Mode): Fastest Payoff has the shortest term and least total interest, Best Monthly Value and Maximum Savings are 30-year, and Maximum Savings has the lowest payment and the most points. Passing the validator is not enough. A block can validate and still mislabel a strategy.
+
 **Purchase:**
 
 ```json
@@ -86,7 +88,7 @@ Per-scenario fields:
   "monthlyTax": 583,
   "monthlyInsurance": 150,
   "hoaMonthly": 350,
-  "analysisDate": "2026-08-20",
+  "analysisDate": "2026-10-13",
   "loanType": "Conventional",
   "creditScore": 750,
   "employmentTenure": 14,
@@ -96,14 +98,14 @@ Per-scenario fields:
   "featured": "Best Monthly Value",
   "scenarios": [
     { "label": "Today's Rate", "rate": 0.06625, "term": 30, "points": 0, "enabled": true },
-    { "label": "Fastest Payoff", "rate": 0.06375, "term": 15, "points": 0, "enabled": true },
-    { "label": "Best Monthly Value", "rate": 0.06125, "term": 30, "points": 0.5, "enabled": true },
-    { "label": "Maximum Savings", "rate": 0.0575, "term": 20, "points": 1, "enabled": true }
+    { "label": "Fastest Payoff", "rate": 0.06, "term": 15, "points": 0, "enabled": true },
+    { "label": "Best Monthly Value", "rate": 0.06375, "term": 30, "points": 0.5, "enabled": true },
+    { "label": "Maximum Savings", "rate": 0.06125, "term": 30, "points": 1.5, "enabled": true }
   ]
 }
 ```
 
-**Refi** (note `currentLoanAmount` and `loanAmount` both set — see the quirk noted above):
+**Refi** (note `currentLoanAmount` and `loanAmount` both set — see the quirk noted above; Keep Current is the existing loan with 27 years left):
 
 ```json
 {
@@ -111,15 +113,15 @@ Per-scenario fields:
   "borrowerName": "John Smith",
   "currentLoanAmount": 450000,
   "loanAmount": 450000,
-  "analysisDate": "2026-08-20",
+  "analysisDate": "2026-10-13",
   "loanType": "Conventional",
   "monthlyTax": 700,
   "monthlyInsurance": 150,
   "scenarios": [
-    { "label": "Keep Current", "rate": 0.045, "term": 25, "points": 0, "enabled": true },
-    { "label": "Fastest Payoff", "rate": 0.0425, "term": 20, "points": 0, "enabled": true },
-    { "label": "Best Monthly Value", "rate": 0.04, "term": 15, "points": 0.75, "enabled": true },
-    { "label": "Maximum Savings", "rate": 0.0375, "term": 10, "points": 1.5, "enabled": true }
+    { "label": "Keep Current", "rate": 0.0725, "term": 27, "points": 0, "enabled": true },
+    { "label": "Fastest Payoff", "rate": 0.0575, "term": 15, "points": 0, "enabled": true },
+    { "label": "Best Monthly Value", "rate": 0.0625, "term": 30, "points": 0.5, "enabled": true },
+    { "label": "Maximum Savings", "rate": 0.06, "term": 30, "points": 1.25, "enabled": true }
   ]
 }
 ```
