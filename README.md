@@ -13,6 +13,12 @@ Skills are `.md` files loaded into Claude Cowork sessions to govern how Claude c
 | archive-triage-decay-rater | v1 | Applies Decay Risk ratings to archive files before promotion or deletion |
 | open-decisions-manager | v1 | Surfaces aged open decisions from OPEN_DECISIONS.md |
 
+## B2C Systems (SignalStrike B2C)
+
+| Skill | Version | Purpose |
+|-------|---------|--------|
+| myhomereport | v1 | Builds the monthly MyHomeReport send, enrolls clients after the Post-Closing Consultation, and handles Strike Rate hits. Draft and stage only. |
+
 ## AI ACT Identities (Cross-Platform, Version Control Only)
 
 Notion is the live source of truth for every identity's boot brief. These files are version-controlled mirrors of the platform-side configuration (ChatGPT Project instructions, etc.) — GitHub does not execute them. Update the file here whenever the live platform configuration changes.
